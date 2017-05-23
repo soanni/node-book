@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "DEBUG=fibonacci:* node ./bin/www",
+    "start": "SERVERPORT=3002 DEBUG=fibonacci:* node ./bin/www",
     "server": "SERVERPORT=3002 node ./fiboserver",
     "client": "node ./fiboclient"
   },
