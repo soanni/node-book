@@ -1,6 +1,6 @@
 'use strict';
 
-module.expors = class Note {
+module.exports = class Note {
  constructor(key, title, body){
   this.key = key;
   this.title = title;

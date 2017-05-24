@@ -43,4 +43,38 @@ router.get('/view', (req, res, next) => {
  .catch(err => { next(err); });
 });
 
+// Edit Note
+router.get('/edit', (req, res, next) => {
+ notes.read(req.query.key)
+ .then(note => {
+  res.render('noteedit', {
+   title: note ? ("Edit " + note.title): "Add a Note",
+   docreate: false,
+   notekey: req.query.key,
+   note: note
+  });
+ })
+ .catch(err => { next(err); });
+});
+
+// Destroy note
+router.get('/destroy', (req, res, next) => {
+ notes.read(req.query.key)
+ .then(note => {
+  res.render('notedestroy', {
+   title: note ? note.title: "",
+   notekey: req.query.key,
+   note: note
+  });
+ })
+ .catch(err => { next(err); });
+});
+
+// Destroy confirm
+router.post('/destroy/confirm', (req, res, next) => {
+ notes.destroy(req.body.notekey)
+ .then(() => { res.redirect('/'); })
+ .catch(err => { next(err); });
+});
+
 module.exports = router;
