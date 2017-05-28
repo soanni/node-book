@@ -6,7 +6,9 @@
     "start": "node ./bin/www",
     "postinstall": "bower install",
     "start-fs": "DEBUG=notes:* REQUEST_LOG_FILE=logs/log NOTES_MODEL=models/notes-fs node ./bin/www",
-    "start-levelup": "DEBUG=notes:* REQUEST_LOG_FILE=logs/log NOTES_MODEL=models/notes-levelup node ./bin/www"
+    "start-levelup": "DEBUG=notes:* REQUEST_LOG_FILE=logs/log NOTES_MODEL=models/notes-levelup node ./bin/www",
+    "sqlite3-setup": "sqlite3 chap07.sqlite3 --init models/schema-sqlite3.sql",
+    "start-sqlite3": "DEBUG=notes:* REQUEST_LOG_FILE=logs/log SQLITE_FILE=chap07.sqlite3 NOTES_MODEL=models/notes-sqlite3 node ./bin/www"
   },
   "dependencies": {
     "body-parser": "~1.17.1",
@@ -22,6 +24,7 @@
     "morgan": "~1.8.1",
     "path": "^0.12.7",
     "serve-favicon": "~2.4.2",
+    "sqlite3": "^3.1.8",
     "util": "^0.10.3"
   },
   "devDependencies": {
