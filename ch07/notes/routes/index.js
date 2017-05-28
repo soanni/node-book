@@ -4,6 +4,7 @@ var express = require('express');
 var router = express.Router();
 var path = require('path');
 var notes = require(process.env.NOTES_MODEL ? path.join('..', process.env.NOTES_MODEL) : '../models/notes-memory');
+var util = require('util');
 
 const log = require('debug')('notes:router-home');
 const error = require('debug')('notes:error');
@@ -12,6 +13,7 @@ const error = require('debug')('notes:error');
 router.get('/', function(req, res, next) {
  notes.keylist()
  .then(keylist => {
+  log('Keylist: ' + util.inspect(keylist));
   var keyPromises = [];
   for (var key of keylist){
    keyPromises.push(

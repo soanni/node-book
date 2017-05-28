@@ -9,7 +9,8 @@
     "start-levelup": "DEBUG=notes:* REQUEST_LOG_FILE=logs/log NOTES_MODEL=models/notes-levelup node ./bin/www",
     "sqlite3-setup": "sqlite3 chap07.sqlite3 --init models/schema-sqlite3.sql",
     "start-sqlite3": "DEBUG=notes:* REQUEST_LOG_FILE=logs/log SQLITE_FILE=chap07.sqlite3 NOTES_MODEL=models/notes-sqlite3 node ./bin/www",
-    "start-sequelize": "DEBUG=notes:* REQUEST_LOG_FILE=logs/log SEQUELIZE_CONNECT=models/sequelize-sqlite.yaml NOTES_MODEL=models/notes-sequelize node ./bin/www"
+    "start-sequelize": "DEBUG=notes:* REQUEST_LOG_FILE=logs/log SEQUELIZE_CONNECT=models/sequelize-sqlite.yaml NOTES_MODEL=models/notes-sequelize node ./bin/www",
+    "start-mongodb": "DEBUG=notes:* REQUEST_LOG_FILE=logs/log MONGO_URL=mongodb://localhost/chap07 NOTES_MODEL=models/notes-mongodb node ./bin/www"
   },
   "dependencies": {
     "body-parser": "~1.17.1",
@@ -23,6 +24,7 @@
     "js-yaml": "^3.8.4",
     "leveldown": "^1.7.0",
     "levelup": "^1.3.7",
+    "mongodb": "^2.2.27",
     "morgan": "~1.8.1",
     "mysql": "^2.13.0",
     "path": "^0.12.7",
