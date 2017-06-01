@@ -2,9 +2,9 @@
   "name": "user-auth-server",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "user-server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "DEBUG=users:* PORT=3333 SEQUELIZE_CONNECT=sequelize-sqlite.yaml node user-server"
   },
   "author": "",
   "license": "ISC",
