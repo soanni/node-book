@@ -28,5 +28,9 @@ node_modules
 
 bower_components
 
+sessions
+
+notes-fs-data
+
 # Debug log from npm
 npm-debug.log

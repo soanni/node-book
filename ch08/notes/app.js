@@ -8,7 +8,8 @@ var FileStreamRotator = require('file-stream-rotator');
 var fs = require('fs-extra');
 
 const session = require('express-session');
-const FileStore = require('session-file-store')(session);
+const RedisStore = require('connect-redis')(session);
+//const FileStore = require('session-file-store')(session);
 
 var index = require('./routes/index');
 var users = require('./routes/users');
@@ -43,11 +44,20 @@ app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
+//app.use(session({
+// store: new FileStore({ path: "sessions"}),
+// secret: 'keyboard mouse',
+// resave: true,
+// saveUninitialized: true
+//}));
 app.use(session({
- store: new FileStore({ path: "sessions"}),
- secret: 'keyboard mouse',
- resave: true,
- saveUninitialized: true
+ store: new RedisStore({
+  host: "127.0.0.1",
+  port: 6379
+ }),
+ secret: "keyboard mouse",
+ resave: false,
+ saveUninitialized: false
 }));
 
 users.initPassport(app);
