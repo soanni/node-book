@@ -13,28 +13,31 @@ const error = require('debug')('notes:error');
 router.get('/', function(req, res, next) {
  notes.keylist()
  .then(keylist => {
-  log('Keylist: ' + util.inspect(keylist));
-  var keyPromises = [];
-  for (var key of keylist){
-   keyPromises.push(
-    notes.read(key)
-    .then(note => {
-     return { key: note.key, title: note.title };
-    })
-   );
-  }
+//  var keyPromises = [];
+//  for (var key of keylist){
+//   keyPromises.push(
+//    notes.read(key)
+//    .then(note => {
+//     return { key: note.key, title: note.title };
+//    })
+//   );
+//  }
+  var keyPromises = keylist.map(key => {
+   return notes.read(key).then(note => { return { key:note.key, title: note.title }; });
+  });
   return Promise.all(keyPromises);
  })
  .then(notelist => {
   res.render('index', { 
       title: 'Notes', 
       notelist: notelist,
+      user: req.user ? req.user : undefined,
       breadcrumbs: [
         { href: '/', text: 'Home' }
       ]
   });
  })
- .catch(err => { next(err); });  
+ .catch(err => { error(err); next(err); });  
 });
 
 module.exports = router;

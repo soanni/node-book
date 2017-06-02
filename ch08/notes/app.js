@@ -7,8 +7,11 @@ var bodyParser = require('body-parser');
 var FileStreamRotator = require('file-stream-rotator');
 var fs = require('fs-extra');
 
+const session = require('express-session');
+const FileStore = require('session-file-store')(session);
+
 var index = require('./routes/index');
-//var users = require('./routes/users');
+var users = require('./routes/users');
 var notes = require('./routes/notes');
 
 var app = express();
@@ -33,16 +36,24 @@ if (process.env.REQUEST_LOG_FILE){
 app.use(logger(process.env.REQUEST_LOG_FORMAT || 'dev', {
  stream: accessLogStream ? accessLogStream : process.stdout
 }));
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/vendor/bootstrap',express.static(path.join(__dirname, 'bower_components', 'bootstrap', 'dist')));
 app.use('/vendor/jquery',express.static(path.join(__dirname, 'bower_components', 'jquery', 'dist')));
+app.use(cookieParser());
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
 
+app.use(session({
+ store: new FileStore({ path: "sessions"}),
+ secret: 'keyboard mouse',
+ resave: true,
+ saveUninitialized: true
+}));
+
+users.initPassport(app);
 
 app.use('/', index);
-//app.use('/users', users);
+app.use('/users', users.router);
 app.use('/notes', notes);
 
 // catch 404 and forward to error handler
@@ -62,5 +73,6 @@ app.use(function(err, req, res, next) {
   res.status(err.status || 500);
   res.render('error');
 });
+
 
 module.exports = app;

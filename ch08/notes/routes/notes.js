@@ -8,15 +8,16 @@ var notes = require(process.env.NOTES_MODEL ? path.join('..', process.env.NOTES_
 
 const log = require('debug')('notes:router-notes');
 const error = require('debug')('notes:error');
-
+const usersRouter = require('./users');
 
 // Add Note
-router.get('/add', (req, res, next) => {
+router.get('/add', usersRouter.ensureAuthenticated, (req, res, next) => {
  res.render('noteedit',{
   title: "Add a Note",
   docreate: true,
   notekey: "",
   note: undefined,
+  user: req.user ? req.user : undefined,
   breadcrumbs: [
     { href: '/', text: 'Home' },
     { active: true, text: "Add Note" }
@@ -26,7 +27,7 @@ router.get('/add', (req, res, next) => {
 });
 
 // Save Note
-router.post('/save', (req, res, next) => {
+router.post('/save', usersRouter.ensureAuthenticated, (req, res, next) => {
  var p;
  if (req.body.docreate === "create" ){
   p = notes.create(req.body.notekey, req.body.title, req.body.body);
@@ -47,6 +48,7 @@ router.get('/view', (req, res, next) => {
    res.render('noteview', {
     title: note ? note.title : "",
     notekey: req.query.key,
+    user: req.user ? req.user : undefined,
     note: note,
     breadcrumbs: [
       { href: '/', text: 'Home' },
@@ -58,13 +60,14 @@ router.get('/view', (req, res, next) => {
 });
 
 // Edit Note
-router.get('/edit', (req, res, next) => {
+router.get('/edit', usersRouter.ensureAuthenticated, (req, res, next) => {
  notes.read(req.query.key)
  .then(note => {
   res.render('noteedit', {
    title: note ? ("Edit " + note.title): "Add a Note",
    docreate: false,
    notekey: req.query.key,
+   user: req.user ? req.user : undefined,
    note: note,
    breadcrumbs: [
       { href: '/', text: 'Home' },
@@ -77,12 +80,13 @@ router.get('/edit', (req, res, next) => {
 });
 
 // Destroy note
-router.get('/destroy', (req, res, next) => {
+router.get('/destroy', usersRouter.ensureAuthenticated, (req, res, next) => {
  notes.read(req.query.key)
  .then(note => {
   res.render('notedestroy', {
    title: note ? note.title: "",
    notekey: req.query.key,
+   user: req.user ? req.user : undefined,
    note: note,
    breadcrumbs: [
      { href: '/', text: 'Home' },
@@ -94,7 +98,7 @@ router.get('/destroy', (req, res, next) => {
 });
 
 // Destroy confirm
-router.post('/destroy/confirm', (req, res, next) => {
+router.post('/destroy/confirm', usersRouter.ensureAuthenticated, (req, res, next) => {
  notes.destroy(req.body.notekey)
  .then(() => { res.redirect('/'); })
  .catch(err => { next(err); });
