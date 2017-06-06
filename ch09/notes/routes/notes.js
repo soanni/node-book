@@ -5,6 +5,7 @@ var express = require('express');
 var router = express.Router();
 var path = require('path');
 var notes = require(process.env.NOTES_MODEL ? path.join('..', process.env.NOTES_MODEL) : '../models/notes-memory');
+const messagesModel = require('../models/messages-sequelize');
 
 const log = require('debug')('notes:router-notes');
 const error = require('debug')('notes:error');
@@ -102,6 +103,20 @@ router.post('/destroy/confirm', usersRouter.ensureAuthenticated, (req, res, next
  notes.destroy(req.body.notekey)
  .then(() => { res.redirect('/'); })
  .catch(err => { next(err); });
+});
+
+// save incoming message to message pool, then broadcast it
+router.post('/make-comment', usersRouter.ensureAuthenticated, (req, res, next) => {
+  messagesModel.postMessage(req.body.from, req.body.namespace, req.body.message)
+  .then(results => { res.status(200).json({ }); })
+  .catch(err => { res.status(500).end(err.stack); });
+});
+
+// delete the indicated message
+router.post('/del-message', usersRouter.ensureAuthenticated, (req, res, next) => {
+  messagesModel.destroyMessage(req.body.id, req.body.namesapce)
+  .then(results => { res.status(200).json({ }); })
+  .catch(err => { res.status(500).end(err.stack); });
 });
 
 module.exports = router;
