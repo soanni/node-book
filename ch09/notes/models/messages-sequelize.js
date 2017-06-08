@@ -2,7 +2,7 @@
 
 const Sequelize = require('sequelize');
 const jsyaml = require('js-yaml');
-const fs = require('fs');
+const fs = require('fs-extra');
 const util = require('util');
 const EventEmitter = require('events');
 
@@ -22,7 +22,7 @@ var connectDB = function() {
 			else resolve(data);
 		});
 	})
-	.then(yamltext => jsyaml.safeLoad(yamlText, 'utf8'))
+	.then(yamltext => jsyaml.safeLoad(yamltext, 'utf8'))
 	.then(params => {
 		if(!sequlz) sequlz = new Sequelize(params.dbname, params.username, params.password, params.params);
 		if(!SQMessage) SQMessage = sequlz.define('Message', {

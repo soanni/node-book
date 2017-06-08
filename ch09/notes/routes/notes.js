@@ -114,7 +114,7 @@ router.post('/make-comment', usersRouter.ensureAuthenticated, (req, res, next) =
 
 // delete the indicated message
 router.post('/del-message', usersRouter.ensureAuthenticated, (req, res, next) => {
-  messagesModel.destroyMessage(req.body.id, req.body.namesapce)
+  messagesModel.destroyMessage(req.body.id, req.body.namespace)
   .then(results => { res.status(200).json({ }); })
   .catch(err => { res.status(500).end(err.stack); });
 });
@@ -131,14 +131,39 @@ module.exports.socketio = function(io) {
     });
   };
 
+  nspView.on('connection', function(socket){
+    log(`/view connected on ${socket.id}`);
+    socket.on('getnotemessages', (namespace, cb) => {
+      messagesModel.recentMessages(namespace)
+      .then(cb)
+      .catch(err => console.error(err.stack));
+    });
+  });
+
+  messagesModel.on('newmessage', newmsg => {
+    forNoteViewClients(socket => {
+      log(`newmessage ${socket.id}`);
+      socket.emit('newmessage', newmsg);
+    });
+  });
+
+  messagesModel.on('destroymessage', data => {
+    forNoteViewClients(socket => {
+      log(`destroymessage ${socket.id}`);
+      socket.emit('destroymessage', data);
+    });
+  });
+
   notes.events.on('noteupdate', newnote => {
     forNoteViewClients(socket => {
+      log(`noteupdate ${socket.id}`);
       socket.emit('noteupdate', newnote);
     });
   });
 
   notes.events.on('notedestroy', data => {
     forNoteViewClients(socket => {
+      log(`notedestroy ${socket.id}`);
       socket.emit('notedestroy', data);
     });
   }); 
